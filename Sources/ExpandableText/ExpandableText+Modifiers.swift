@@ -1,6 +1,6 @@
 //
 //  ExpandableText+Modifiers.swift
-//  
+//
 //
 //  Created by ned on 25/02/23.
 //
@@ -73,6 +73,48 @@ public extension ExpandableText {
     func moreButtonColor(_ color: Color) -> Self {
         var copy = self
         copy.moreButtonColor = color
+        return copy
+    }
+    
+    func moreButtonIcon(_ icon: Image) -> Self {
+        var copy = self
+        copy.moreButtonIcon = icon
+        return copy
+    }
+    
+    func moreButtonIconSize(_ size: CGFloat) -> Self {
+        var copy = self
+        copy.moreButtonIconSize = size
+        return copy
+    }
+    
+    func lessButtonText(_ lessText: String) -> Self {
+        var copy = self
+        copy.lessButtonText = lessText
+        return copy
+    }
+    
+    func lessButtonFont(_ font: Font) -> Self {
+        var copy = self
+        copy.lessButtonFont = font
+        return copy
+    }
+    
+    func lessButtonColor(_ color: Color) -> Self {
+        var copy = self
+        copy.lessButtonColor = color
+        return copy
+    }
+    
+    func lessButtonIcon(_ icon: Image) -> Self {
+        var copy = self
+        copy.lessButtonIcon = icon
+        return copy
+    }
+    
+    func lessButtonIconSize(_ size: CGFloat) -> Self {
+        var copy = self
+        copy.lessButtonIconSize = size
         return copy
     }
     

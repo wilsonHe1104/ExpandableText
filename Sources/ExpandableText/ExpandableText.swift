@@ -41,6 +41,13 @@ public struct ExpandableText: View {
     internal var moreButtonText: String = "more"
     internal var moreButtonFont: Font?
     internal var moreButtonColor: Color = .accentColor
+    internal var moreButtonIcon: Image? = nil
+    internal var moreButtonIconSize: CGFloat = 14
+    internal var lessButtonText: String = "less"
+    internal var lessButtonFont: Font?
+    internal var lessButtonColor: Color = .accentColor
+    internal var lessButtonIcon: Image? = nil
+    internal var lessButtonIconSize: CGFloat = 14
     internal var expandAnimation: Animation = .default
     internal var trimMultipleNewlinesWhenTruncated: Bool = true
     
@@ -54,46 +61,67 @@ public struct ExpandableText: View {
     }
     
     public var body: some View {
-        content
-            .lineLimit(isExpanded ? nil : lineLimit)
-            .applyingTruncationMask(size: moreTextSize, enabled: shouldShowMoreButton)
-            .readSize { size in
-                truncatedSize = size
-                isTruncated = truncatedSize != intrinsicSize
-            }
-            .background(
-                content
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-                    .hidden()
-                    .readSize { size in
-                        intrinsicSize = size
-                        isTruncated = truncatedSize != intrinsicSize
-                    }
-            )
-            .background(
-                Text(moreButtonText)
-                    .font(moreButtonFont ?? font)
-                    .hidden()
-                    .readSize { moreTextSize = $0 }
-            )
-            .contentShape(Rectangle())
-            .onTapGesture {
-                if shouldShowMoreButton {
-                    withAnimation(expandAnimation) { isExpanded.toggle() }
+        VStack(alignment: .trailing){
+            content
+                .lineLimit(isExpanded ? nil : lineLimit)
+                .applyingTruncationMask(size: getMaskSize(), enabled: shouldShowMoreButton)
+                .readSize { size in
+                    truncatedSize = size
+                    isTruncated = truncatedSize != intrinsicSize
                 }
-            }
-            .modifier(OverlayAdapter(alignment: .trailingLastTextBaseline, view: {
-                if shouldShowMoreButton {
-                    Button {
+                .background(
+                    content
+                        .lineLimit(nil)
+                        .fixedSize(horizontal: false, vertical: true)
+                        .hidden()
+                        .readSize { size in
+                            intrinsicSize = size
+                            isTruncated = truncatedSize != intrinsicSize
+                        }
+                )
+                .background(
+                    Text(moreButtonText)
+                        .font(moreButtonFont ?? font)
+                        .hidden()
+                        .readSize { moreTextSize = $0 }
+                )
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    if shouldShowMoreButton {
                         withAnimation(expandAnimation) { isExpanded.toggle() }
-                    } label: {
-                        Text(moreButtonText)
-                            .font(moreButtonFont ?? font)
-                            .foregroundColor(moreButtonColor)
                     }
                 }
-            }))
+                .modifier(OverlayAdapter(alignment: .trailingLastTextBaseline, view: {
+                    if shouldShowMoreButton {
+                        Button {
+                            withAnimation(expandAnimation) { isExpanded.toggle() }
+                        } label: {
+                            if let moreButtonIcon = moreButtonIcon {
+                                moreButtonIcon
+                                    .resizable()
+                                    .frame(width: moreButtonIconSize, height: moreButtonIconSize)
+                            }
+                            Text(moreButtonText)
+                                .font(moreButtonFont ?? font)
+                                .foregroundColor(moreButtonColor)
+                        }
+                    }
+                }))
+            if !shouldShowMoreButton {
+                Button {
+                    withAnimation(expandAnimation) { isExpanded.toggle() }
+                } label: {
+                    if let lessButtonIcon = lessButtonIcon {
+                        lessButtonIcon
+                            .resizable()
+                            .frame(width: lessButtonIconSize, height: lessButtonIconSize)
+                    }
+                    Text(lessButtonText)
+                        .font(lessButtonFont ?? font)
+                        .foregroundColor(lessButtonColor)
+                }
+            }
+        }
     }
     
     private var content: some View {
@@ -113,5 +141,14 @@ public struct ExpandableText: View {
     
     private var textTrimmingDoubleNewlines: String {
         text.replacingOccurrences(of: #"\n\s*\n"#, with: "\n", options: .regularExpression)
+    }
+    
+    private func getMaskSize() -> CGSize {
+        var width = moreTextSize.width
+        var height = moreTextSize.height
+        if moreButtonIcon != nil {
+            width += moreButtonIconSize
+        }
+        return CGSize(width: width, height: height)
     }
 }
