@@ -28,6 +28,7 @@ ExpandableText("Lorem ipsum dolor sit amet, consectetur adipiscing elit...")
 public struct ExpandableText: View {
 
     @State private var isExpanded: Bool = false
+    @State private var hasExpanded: Bool = false
     @State private var isTruncated: Bool = false
 
     @State private var intrinsicSize: CGSize = .zero
@@ -95,6 +96,7 @@ public struct ExpandableText: View {
                     if shouldShowMoreButton {
                         Button {
                             withAnimation(expandAnimation) { isExpanded.toggle() }
+                            hasExpanded = true
                         } label: {
                             if let moreButtonIcon = moreButtonIcon {
                                 moreButtonIcon
@@ -107,7 +109,7 @@ public struct ExpandableText: View {
                         }
                     }
                 }))
-            if !shouldShowMoreButton {
+            if !shouldShowMoreButton && hasExpanded  {
                 Button {
                     withAnimation(expandAnimation) { isExpanded.toggle() }
                 } label: {
